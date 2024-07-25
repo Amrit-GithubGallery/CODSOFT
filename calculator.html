@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.calculator {
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 300px;
+}
+
+.display {
+    background-color: #222;
+    color: #fff;
+    font-size: 2em;
+    padding: 20px;
+    text-align: right;
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 20px;
+}
+
+.button {
+    background-color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.5em;
+    padding: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.button:hover {
+    background-color: #ddd;
+}
+
+.operator {
+    background-color: #ff9500;
+    color: #fff;
+}
+
+.operator:hover {
+    background-color: #ff8500;
+}
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button class="button" data-value="7">7</button>
+            <button class="button" data-value="8">8</button>
+            <button class="button" data-value="9">9</button>
+            <button class="button operator" data-value="/">/</button>
+            <button class="button" data-value="4">4</button>
+            <button class="button" data-value="5">5</button>
+            <button class="button" data-value="6">6</button>
+            <button class="button operator" data-value="*">*</button>
+            <button class="button" data-value="1">1</button>
+            <button class="button" data-value="2">2</button>
+            <button class="button" data-value="3">3</button>
+            <button class="button operator" data-value="-">-</button>
+            <button class="button" data-value="0">0</button>
+            <button class="button" data-value=".">.</button>
+            <button class="button" id="clear">C</button>
+            <button class="button operator" data-value="+">+</button>
+            <button class="button operator" id="equals">=</button>
+        </div>
+    </div>
+<script>
+
+
+const display = document.getElementById('display');
+const buttons = document.querySelectorAll('.button');
+
+let currentInput = '';
+let operator = '';
+let firstOperand = null;
+
+buttons.forEach(button => {
+    button.addEventListener('click', () => {
+        const value = button.getAttribute('data-value');
+
+        if (value >= '0' && value <= '9' || value === '.') {
+            currentInput += value;
+            display.textContent = currentInput;
+        } else if (value === 'C') {
+            currentInput = '';
+            operator = '';
+            firstOperand = null;
+            display.textContent = '0';
+        } else if (value === '=') {
+            if (firstOperand !== null && operator !== '' && currentInput !== '') {
+                currentInput = evaluate(firstOperand, currentInput, operator);
+                display.textContent = currentInput;
+                firstOperand = null;
+                operator = '';
+            }
+        } else {
+            if (firstOperand === null) {
+                firstOperand = currentInput;
+                operator = value;
+                currentInput = '';
+            } else if (currentInput !== '') {
+                currentInput = evaluate(firstOperand, currentInput, operator);
+                display.textContent = currentInput;
+                firstOperand = currentInput;
+                operator = value;
+                currentInput = '';
+            }
+        }
+    });
+});
+
+function evaluate(operand1, operand2, operator) {
+    let result = 0;
+    operand1 = parseFloat(operand1);
+    operand2 = parseFloat(operand2);
+
+    switch (operator) {
+        case '+':
+            result = operand1 + operand2;
+            break;
+        case '-':
+            result = operand1 - operand2;
+            break;
+        case '*':
+            result = operand1 * operand2;
+            break;
+        case '/':
+            result = operand1 / operand2;
+            break;
+    }
+
+    return result.toString();
+}
+</script>
+</body>
+</html>
